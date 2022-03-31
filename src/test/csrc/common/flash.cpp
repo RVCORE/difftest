@@ -27,7 +27,8 @@ long get_flash_size() { return flash_bin_size; }
 
 extern "C"{
 void flash_read(uint32_t addr, uint64_t *data) {
-  fseek(flash_fp, addr, SEEK_SET);
+  uint32_t aligned_addr = addr & FLASH_ALIGH_MASK;
+  fseek(flash_fp, aligned_addr, SEEK_SET);
   fread(data, 8, 1, flash_fp);
   //TODO: assert illegal access
 }
