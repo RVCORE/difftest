@@ -58,3 +58,48 @@ int main(int argc, const char** argv) {
 
   return !is_good_trap;
 }
+
+Emulator* global_emu = NULL;
+
+// use `extern "C"` to avoid func name mangle
+extern "C" int run_emu(int argc, const char** argv) {
+  printf("Emu compiled at %s, %s\n", __DATE__, __TIME__);
+  global_emu = new Emulator(argc, argv);
+  auto args = global_emu->get_args();
+  uint64_t cycles = global_emu->execute(args.max_cycles, args.max_instr);
+  bool is_good_trap = global_emu->is_good_trap();
+  delete global_emu;
+  eprintf(ANSI_COLOR_BLUE "Seed=%d Guest cycle spent: %'" PRIu64
+      " (this will be different from cycleCnt if emu loads a snapshot)\n" ANSI_COLOR_RESET, args.seed, cycles);
+  return !is_good_trap;
+}
+
+// uint64_t Emulator::execute(uint64_t max_cycle, uint64_t max_instr) {
+//   this->max_cycle = max_cycle;
+//   this->max_instr = max_instr;
+//   execute_init();
+//   while (!Verilated::gotFinish() && trapCode == STATE_RUNNING) {
+//     if(execute_single_cycle() != 0)
+//       break; // break if execute_single_cycle requires abortion
+//   }
+//   // Simulation ends here, do clean up & display jobs
+//   execute_cleanup();
+//   display_trapinfo();
+//   return cycles;
+// }
+
+int init_emu(int argc, const char** argv) {
+  global_emu = new Emulator(argc, argv);
+  auto args = global_emu->get_args();
+  return 0;
+}
+
+int emu_run_n_cycle(int n) {
+  return 0;
+}
+
+int simulator_run_n_cycle(int n) {
+  return 0;
+}
+
+
