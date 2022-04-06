@@ -17,6 +17,7 @@
 import "DPI-C" function void set_bin_file(string bin);
 import "DPI-C" function void simv_init();
 import "DPI-C" function int simv_step();
+import "DPI-C" function void set_diff_file(string so);
 
 module tb_top();
 
@@ -33,6 +34,25 @@ wire        io_uart_in_valid;
 wire [ 7:0] io_uart_in_ch;
 
 string bin_file;
+string diff_file;
+bit dump;
+initial begin
+    if($test$plusargs("dump"))begin
+        if(!$value$plusargs("dump=%d",dump))
+            dump = 1'b0;
+    end
+    else 
+        dump = 1'b0;
+end
+initial begin
+    $timeformat(-9,3,"ns",20);
+    if(dump == 1)begin
+        $display("Dumping Waveform for DEBUG is active !!!");
+        $fsdbAutoSwitchDumpfile(10000,"top.fsdb",20);
+        $fsdbDumpfile("top.fsdb");
+        $fsdbDumpvars(0,tb_top);
+    end
+end
 initial begin
   clock = 0;
   reset = 1;
@@ -58,7 +78,14 @@ initial begin
   // workload: bin file
   if ($test$plusargs("workload")) begin
     $value$plusargs("workload=%s", bin_file);
+    $display("YY Log: args workload=%s", bin_file);
     set_bin_file(bin_file);
+  end
+  // difftest so file path
+  if ($test$plusargs("diff")) begin
+    $value$plusargs("diff=%s", diff_file);
+    $display("YY Log: diff=%s", diff_file);
+    set_diff_file(diff_file);
   end
 
   #100 reset = 0;
@@ -98,7 +125,7 @@ always @(posedge clock) begin
   end
   else if (!has_init) begin
     simv_init();
-    has_init <= 1'b1;
+    has_init <= 1'b1; 
   end
 
   // check errors
@@ -109,6 +136,8 @@ always @(posedge clock) begin
   end
 
 end
+// `define CORE0 tb_top.sim.l_soc.core_with_l2.core
+// `include "/home51/yangye/projects/xs/XiangShan/difftest/src/test/vsrc/vcs/initial_cpu"
 
 endmodule
 

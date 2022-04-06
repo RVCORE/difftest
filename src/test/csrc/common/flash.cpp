@@ -47,7 +47,7 @@ void init_flash(void) {
   {
     eprintf(ANSI_COLOR_MAGENTA "[warning] flash img not found\n");
   }
-  printf("use bin as a flash!\n"); 
+  printf("use %s as a flash!\n", FLASH_IMAGE); 
 #else 
   printf("use fixed 3 instructions!\n");
 #endif

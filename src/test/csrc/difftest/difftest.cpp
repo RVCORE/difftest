@@ -41,11 +41,37 @@ static const char *reg_name[DIFFTEST_NR_REG+1] = {
 
 Difftest **difftest = NULL;
 
+class CoreState {
+  enum { INVALID, VALID };
+  uint64_t states[NUM_CORES];
+  int num_memcpy;
+public:
+  CoreState(): num_memcpy(1) {
+    for (size_t i = 0; i < NUM_CORES; i++)
+      states[i] = INVALID;
+  }
+  void set_valid(int core_id) {
+    states[core_id] = VALID;
+  }
+  bool have_running_core() {
+    for (size_t i = 0; i < NUM_CORES; i++) {
+      if (states[i] == VALID) return true;
+    }
+    return false;
+  }
+  int get_num_memcpy() {
+    return (num_memcpy > 0) ? (num_memcpy--) : 0;
+  }
+};
+
+CoreState* cores;
+
 int difftest_init() {
   difftest = new Difftest*[NUM_CORES];
   for (int i = 0; i < NUM_CORES; i++) {
     difftest[i] = new Difftest(i);
   }
+  cores = new CoreState;
   return 0;
 }
 
@@ -84,6 +110,12 @@ void Difftest::update_nemuproxy(int coreid) {
   proxy = new DIFF_PROXY(coreid);
 }
 
+#ifdef BASIC_DIFFTEST_ONLY
+#define RELEASE_SWITCH "ON"
+#else
+#define RELEASE_SWITCH "OFF"
+#endif
+
 int Difftest::step() {
   progress = false;
   ticks++;
@@ -95,6 +127,11 @@ int Difftest::step() {
   // TODO: update nemu/xs to fix this_pc comparison
   dut.csr.this_pc = dut.commit[0].pc;
 #endif
+  static int rele_c = 1;
+  if(rele_c) {
+    printf("RELEASE=%s, NUM_CORES=%d\n", RELEASE_SWITCH, NUM_CORES);
+    rele_c -= 1;
+  }
 
   if (check_timeout()) {
     return 1;
@@ -341,7 +378,8 @@ void Difftest::do_instr_commit(int i) {
 
 void Difftest::do_first_instr_commit() {
   if (!has_commit && dut.commit[0].valid) {
-#ifndef BASIC_DIFFTEST_ONLY
+    // printf("dut commit pc=%lx, FIRST_INST_ADDR=%lx\n", dut.commit[0].pc, FIRST_INST_ADDRESS);
+#ifndef BASIC_DIFFTEST_ONLY // when define BASIC_DIFFTEST_ONLY, difftest basic instr commit can not get the precise pc value
     if (dut.commit[0].pc != FIRST_INST_ADDRESS) {
       return;
     }
@@ -349,6 +387,7 @@ void Difftest::do_first_instr_commit() {
     printf("The first instruction of core %d has commited. Difftest enabled. \n", id);
     has_commit = 1;
     nemu_this_pc = FIRST_INST_ADDRESS;
+    cores->set_valid(id);
 
     proxy->memcpy(0x80000000, get_img_start(), get_img_size(), DIFFTEST_TO_REF);
     // Use a temp variable to store the current pc of dut
@@ -538,9 +577,9 @@ int Difftest::do_golden_memory_update() {
 
 int Difftest::check_timeout() {
   // check whether there're any commits since the simulation starts
-  if (!has_commit && ticks > last_commit + firstCommit_limit) {
-    eprintf("No instruction commits for %lu cycles of core %d. Please check the first instruction.\n",
-      firstCommit_limit, id);
+  if (!cores->have_running_core() && ticks > last_commit + firstCommit_limit) {
+    eprintf("No instruction commits for %lu cycles of all core. Please check the first instruction.\n",
+      firstCommit_limit);
     eprintf("Note: The first instruction may lie in 0x10000000 which may executes and commits after 500 cycles.\n");
     eprintf("   Or the first instruction may lie in 0x80000000 which may executes and commits after 2000 cycles.\n");
     display();
@@ -548,7 +587,7 @@ int Difftest::check_timeout() {
   }
 
   // check whether there're any commits in the last 5000 cycles
-  if (has_commit && ticks > last_commit + stuck_limit) {
+  if (has_commit && ticks > last_commit + stuck_limit) { 
     eprintf("No instruction of core %d commits for %lu cycles, maybe get stuck\n"
         "(please also check whether a fence.i instruction requires more than %lu cycles to flush the icache)\n",
         id, stuck_limit, stuck_limit);

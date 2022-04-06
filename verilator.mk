@@ -83,6 +83,16 @@ ifeq ($(RELEASE),1)
 EMU_CXXFLAGS += -DBASIC_DIFFTEST_ONLY
 endif
 
+ifeq ($(USE_FLASH), 1)
+EMU_CXXFLAGS += -DFLASH_IMAGE=\\\"/home51/yangye/projects/xs/flash/build/flash.bin\\\"
+endif
+
+ifneq ($(NUM_CORES), 1)
+EMU_CXXFLAGS += -DDEBUG_SMP
+endif
+
+VEXTRA_FLAGS += +define+USE_RF_DEBUG +define+SNPS_FAST_SIM_FFV  -Wno-TIMESCALEMOD #-Wno-unused-const-variable
+
 # --trace
 VERILATOR_FLAGS =                   \
   --top-module $(EMU_TOP)           \
@@ -105,14 +115,22 @@ EMU_DEPS := $(EMU_VFILES) $(EMU_CXXFILES)
 EMU_HEADERS := $(shell find $(EMU_CSRC_DIR) -name "*.h")     \
                $(shell find $(SIM_CSRC_DIR) -name "*.h")     \
                $(shell find $(DIFFTEST_CSRC_DIR) -name "*.h")
-EMU := $(BUILD_DIR)/emu
+EMU := $(BUILD_DIR)/emu-$(NUM_CORES)
 
-$(EMU_MK): $(SIM_TOP_V) | $(EMU_DEPS)
+VERILATOR_FLIST := /home51/yangye/projects/xs/nanhu_release/flist_emu$(NUM_CORES).f
+# FLIST_1995 := /home51/yangye/projects/xs/20220216-nh-release-v3/cp_nh_release/flist/flist_sram_emu.f
+# +1800-2012ext+v -F $(VERILATOR_FLIST) +1364-1995ext+v -F $(FLIST_1995)
+
+READ_FLIST_SCRIPT = ./read_flist.py
+get-flist:$(READ_FLIST_SCRIPT)
+	python3 $(READ_FLIST_SCRIPT) $(VERILATOR_FLIST)
+
+$(EMU_MK): $(VERILATOR_FLIST) | $(EMU_DEPS) get-flist
 	@mkdir -p $(@D)
 	@echo "\n[verilator] Generating C++ files..." >> $(TIMELOG)
 	@date -R | tee -a $(TIMELOG)
 	$(TIME_CMD) verilator --cc --exe $(VERILATOR_FLAGS) \
-		-o $(abspath $(EMU)) -Mdir $(@D) $^ $(EMU_DEPS)
+		-o $(abspath $(EMU)) -Mdir $(@D) -F $(VERILATOR_FLIST) $(EMU_DEPS)
 	find $(BUILD_DIR) -name "VSimTop.h" | xargs sed -i 's/private/public/g'
 	find $(BUILD_DIR) -name "VSimTop.h" | xargs sed -i 's/const vlSymsp/vlSymsp/g'
 	find $(BUILD_DIR) -name "VSimTop__Syms.h" | xargs sed -i 's/VlThreadPool\* const/VlThreadPool*/g'
@@ -144,6 +162,9 @@ EMU_FLAGS = -s $(SEED) -b $(B) -e $(E) $(SNAPSHOT_OPTION) $(WAVEFORM) $(EMU_ARGS
 
 emu: $(EMU)
 
+emu-clean:
+	rm -rf $(EMU) $(BUILD_DIR)/emu-compile
+
 emu-run: emu
 ifneq ($(REMOTE),localhost)
 	ls build
@@ -155,4 +176,4 @@ coverage:
 	python3 scripts/coverage/coverage.py build/logs/annotated/XSSimTop.v build/XSSimTop_annotated.v
 	python3 scripts/coverage/statistics.py build/XSSimTop_annotated.v >build/coverage.log
 
-.PHONY: build_emu_local
+.PHONY: build_emu_local get-flist

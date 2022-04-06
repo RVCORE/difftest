@@ -189,8 +189,8 @@ Emulator::Emulator(int argc, const char *argv[]):
   if (args.enable_jtag) {
     jtag = new remote_bitbang_t(23334);
   }
-  // init core
-  reset_ncycles(10);
+  // // init core
+  // reset_ncycles(10);
 
   // init ram
   init_ram(args.image);
@@ -317,6 +317,9 @@ uint64_t Emulator::execute(uint64_t max_cycle, uint64_t max_instr) {
   if(args.enable_runahead){
     runahead_init();
   }
+
+  // init core
+  reset_ncycles(10);
 
 #ifdef DEBUG_REFILL
   difftest[0]->save_track_instr(args.track_instr);

@@ -22,7 +22,7 @@
 #include "ram.h"
 
 static bool has_reset = false;
-static char bin_file[64] = "ram.bin";
+static char bin_file[256] = "../ready-to-run/coremark-2-iteration.bin";//"ram.bin";
 
 extern "C" void set_bin_file(char *s) {
   strcpy(bin_file, s);
@@ -39,13 +39,13 @@ extern "C" void simv_init() {
 
   assert_init();
   init_ram(bin_file);
-
 }
 
 extern "C" int simv_step() {
   if (assert_count > 0) {
     return 1;
   }
+
   if (difftest_state() != -1) {
     int trapCode = difftest_state();
     switch (trapCode) {
@@ -58,4 +58,9 @@ extern "C" int simv_step() {
     return trapCode + 1;
   }
   return difftest_step();
+}
+
+extern const char *difftest_ref_so;
+extern "C" void set_diff_file(char *s) {
+  difftest_ref_so = s;
 }

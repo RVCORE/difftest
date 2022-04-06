@@ -9,7 +9,7 @@ module EICG_wrapper(
 
   reg en_latched /*verilator clock_enable*/;
 
-  always_latch @(*) begin
+  always  @(*) begin
      if (!in) begin
         en_latched = en || test_en;
      end
