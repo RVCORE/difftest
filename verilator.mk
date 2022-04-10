@@ -84,11 +84,12 @@ EMU_CXXFLAGS += -DBASIC_DIFFTEST_ONLY
 endif
 
 ifeq ($(USE_FLASH), 1)
-EMU_CXXFLAGS += -DFLASH_IMAGE=\\\"/home51/yangye/projects/xs/flash/build/flash.bin\\\"
-endif
+FLASH_DIR = $(NOOP_HOME)/difftest/flash
+FLASH_BIN = $(FLASH_DIR)/build/flash.bin
+$(FLASH_BIN): 
+	make -C ./flash/
 
-ifneq ($(NUM_CORES), 1)
-EMU_CXXFLAGS += -DDEBUG_SMP
+EMU_CXXFLAGS += -DFLASH_IMAGE=\\\"$(FLASH_BIN)\\\"
 endif
 
 VEXTRA_FLAGS += +define+USE_RF_DEBUG +define+SNPS_FAST_SIM_FFV  -Wno-TIMESCALEMOD #-Wno-unused-const-variable
