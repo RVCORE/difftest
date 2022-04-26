@@ -14,7 +14,8 @@
 # See the Mulan PSL v2 for more details.
 #***************************************************************************************
 
-VCS_TARGET = simv-$(NUM_CORES)
+OUT_DIR ?= .
+VCS_TARGET = $(OUT_DIR)/simv-$(NUM_CORES)
 
 FLIST_NAME = /home51/yangye/projects/xs/nanhu_release/flist_vcs$(NUM_CORES).f
 
@@ -48,6 +49,7 @@ VCS_FLAGS += +vcs+initreg+random +define+MEM_CHECK_OFF+SNPS_FAST_SIM_FFV +define
 VCS_FLAGS += +define+RANDOMIZE_GARBAGE_ASSIGN+RANDOMIZE_MEM_INIT
 # VCS_FLAGS += +define+RANDOMIZE_GARBAGE_ASSIGN +define+RANDOMIZE_INVALID_ASSIGN
 VCS_FLAGS += +define+RANDOMIZE_MEM_INIT +define+RANDOMIZE_DELAY=0 +define+RANDOMIZE_REG_INIT
+VCS_FLAGS += +vcs+initreg+random
 # SRAM lib defines
 # VCS_FLAGS += +define+UNIT_DELAY +define+no_warning
 # C++ flags
@@ -59,7 +61,7 @@ VCS_FLAGS += -Mdir=$(VCS_BUILD_DIR) -o $(VCS_TARGET)
 
 simv:   $(VCS_VFILES) $(FLIST_NAME)
 	-@mkdir -p $(VCS_BUILD_DIR)
-	vcs $(VCS_FLAGS) $(VCS_CXXFILES) -F $(FLIST_NAME) $(VCS_VFILES) -l compile.log
+	vcs $(VCS_FLAGS) $(VCS_CXXFILES) -F $(FLIST_NAME) $(VCS_VFILES) -l $(OUT_DIR)/vcs_compile_$(NUM_CORES).log
 
 vcs-clean:
 	rm -rf $(VCS_TARGET) csrc DVEfiles simv.daidir stack.info.* ucli.key $(VCS_BUILD_DIR)
