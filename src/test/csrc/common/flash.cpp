@@ -35,7 +35,7 @@ extern "C" void flash_read(uint32_t addr, uint64_t *data) {
   if (rIdx >= EMU_FLASH_SIZE / sizeof(uint64_t)) {
     printf("[warning] read addr %x is out of bound\n",addr);
     *data = 0;
-  } else if (flash_base == (uint64_t *)MAP_FAILED) {
+  } else if (flash_base == NULL || flash_base == (uint64_t *)MAP_FAILED) {
     switch(rIdx) {
       case 0 :
         *data = 0x01f292930010029b;
