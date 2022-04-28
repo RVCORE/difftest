@@ -20,6 +20,7 @@
 #include "device.h"
 #include "goldenmem.h"
 #include "ram.h"
+#include "flash.h"
 
 static bool has_reset = false;
 static char bin_file[64] = "ram.bin";
