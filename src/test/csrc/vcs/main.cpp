@@ -28,6 +28,10 @@ extern "C" void set_bin_file(char *s) {
   strcpy(bin_file, s);
 }
 
+extern "C" void set_flash_file(char *s) {
+  init_flash(s);
+}
+
 extern "C" void simv_init() {
   printf("simv compiled at %s, %s\n", __DATE__, __TIME__);
   setlocale(LC_NUMERIC, "");

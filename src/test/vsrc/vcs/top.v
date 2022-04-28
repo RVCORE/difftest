@@ -15,6 +15,7 @@
 ***************************************************************************************/
 
 import "DPI-C" function void set_bin_file(string bin);
+import "DPI-C" function void set_flash_file(string bin);
 import "DPI-C" function void simv_init();
 import "DPI-C" function int simv_step();
 
@@ -33,6 +34,7 @@ wire        io_uart_in_valid;
 wire [ 7:0] io_uart_in_ch;
 
 string bin_file;
+string flash_bin;
 initial begin
   clock = 0;
   reset = 1;
@@ -59,6 +61,11 @@ initial begin
   if ($test$plusargs("workload")) begin
     $value$plusargs("workload=%s", bin_file);
     set_bin_file(bin_file);
+  end
+  // init flash bin
+  if ($test$plusargs("flash")) begin
+    $value$plusargs("flash=%s", flash_bin);
+    set_flash_file(flash_bin);
   end
 
   #100 reset = 0;
