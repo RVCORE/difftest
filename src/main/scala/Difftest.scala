@@ -95,6 +95,13 @@ class DiffCSRStateIO extends DifftestBundle {
   val sscratch = Input(UInt(64.W))
   val mideleg = Input(UInt(64.W))
   val medeleg = Input(UInt(64.W))
+  val hstatus = Input(UInt(64.W))
+  val hgatp = Input(UInt(64.W))
+  val vsstatus = Input(UInt(64.W))
+  val vxrm = Input(UInt(64.W))
+  val vstart = Input(UInt(64.W))
+  val vl = Input(UInt(64.W))
+  val vtype = Input(UInt(64.W))
 }
 
 class DiffDebugModeIO extends DifftestBundle {
@@ -123,6 +130,10 @@ class DiffArchIntRegStateIO extends DifftestBundle {
 
 class DiffArchFpRegStateIO extends DifftestBundle {
   val fpr  = Input(Vec(32, UInt(64.W)))
+}
+
+class DiffArchVectorRegStateIO extends DifftestBundle {
+  val vpr = Input(Vec(32, UInt(256.W)))
 }
 
 class DiffSbufferEventIO extends DifftestBundle with DifftestWithIndex{
@@ -216,6 +227,7 @@ abstract class DifftestModule[T <: DifftestBundle] extends ExtModule with HasExt
       case width if width > 1  && width <= 8  => "byte"
       case width if width > 8  && width <= 32 => "int"
       case width if width > 32 && width <= 64 => "longint"
+      case width if width > 64 && width <= 256 => s"bit[${width-1}:0]"
       case _ => s"unsupported io type of width ${data.getWidth}!!\n"
     }
     val argString = Seq(directionString, f"${typeString}%7s", argName)
@@ -285,6 +297,7 @@ class DifftestIntWriteback extends DifftestBaseModule(new DiffIntWritebackIO)
 class DifftestFpWriteback extends DifftestBaseModule(new DiffFpWritebackIO)
 class DifftestArchIntRegState extends DifftestBaseModule(new DiffArchIntRegStateIO)
 class DifftestArchFpRegState extends DifftestBaseModule(new DiffArchFpRegStateIO)
+class DifftestArchVectorRegState extends DifftestBaseModule(new DiffArchVectorRegStateIO)
 class DifftestSbufferEvent extends DifftestBaseModule(new DiffSbufferEventIO)
 class DifftestStoreEvent extends DifftestBaseModule(new DiffStoreEventIO)
 class DifftestLoadEvent extends DifftestBaseModule(new DiffLoadEventIO)

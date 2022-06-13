@@ -34,10 +34,20 @@ static const char *reg_name[DIFFTEST_NR_REG+1] = {
   "sstatus", "scause", "sepc",
   "satp",
   "mip", "mie", "mscratch", "sscratch", "mideleg", "medeleg",
-  "mtval", "stval", "mtvec", "stvec", "mode",
+  "mtval", "stval", "mtvec", "stvec",
+  "hstatus", "hgatp", "vsstatus",
+  "vxrm", "vstart", "vl", "vtype",
+  "virtualization", "mode",
 #ifdef DEBUG_MODE_DIFF
   "debug mode", "dcsr", "dpc", "dscratch0", "dscratch1",
  #endif
+};
+
+static const char *vector_reg_name[32] = {
+  "v0", "v1", "v2",  "v3",  "v4", "v5", "v6",  "v7",
+  "v8", "v9", "v10",  "v11",  "v12", "v13", "v14",  "v15",
+  "v16", "v17", "v18",  "v19",  "v20", "v21", "v22",  "v23",
+  "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31",
 };
 
 Difftest **difftest = NULL;
@@ -181,6 +191,17 @@ int Difftest::step() {
       if (dut_regs_ptr[i] != ref_regs_ptr[i]) {
         printf("%7s different at pc = 0x%010lx, right= 0x%016lx, wrong = 0x%016lx\n",
             reg_name[i], ref.csr.this_pc, ref_regs_ptr[i], dut_regs_ptr[i]);
+      }
+    }
+    uint256_t* dut_vec_ptr = (uint256_t*)&(dut.vregs);
+    uint256_t* ref_vec_ptr = (uint256_t*)&ref.vregs;
+    for (int i = 0; i < 32; i++) {
+      if (dut_vec_ptr[i] != ref_vec_ptr[i]) {
+        printf("%7s  different at pc = 0x%010lx, right= ", vector_reg_name[i], ref.csr.this_pc);
+        ref_vec_ptr[i].display();
+        printf(", wrong = ");
+        dut_vec_ptr[i].display();
+        printf("\n");
       }
     }
     return 1;
@@ -622,7 +643,7 @@ void Difftest::display() {
   printf("\n==============  REF Regs  ==============\n");
   fflush(stdout);
   proxy->isa_reg_display();
-  printf("priviledgeMode: %lu\n", dut.csr.priviledgeMode);
+  printf("DUT virtualizationMode: %d, priviledgeMode: %lu\n", dut.csr.virtualizationMode, dut.csr.priviledgeMode);
 }
 
 void DiffState::display(int coreid) {

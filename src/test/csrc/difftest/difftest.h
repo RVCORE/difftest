@@ -19,6 +19,8 @@
 
 #include "common.h"
 #include "refproxy.h"
+// #include "VSimTop__Dpi.h"
+#include "svdpi.h"
 
 #define DIFFTEST_CORE_NUMBER  NUM_CORES
 
@@ -76,10 +78,36 @@ typedef struct {
   uint8_t  wdest;
 } instr_commit_t;
 
+class uint256_t 
+{
+public:
+  uint64_t v[4];
+  uint256_t operator= (svBitVecVal* data) {
+    uint32_t* p = (uint32_t*)this->v;
+    for (int i = 0; i < 8; i++)
+      p[i] = data[i];
+    return *this;
+  }
+  bool operator!= (uint256_t &a) {
+    for (int i = 0; i < 4; i++) {
+      if (this->v[i] != a.v[i])
+        return true;
+    }
+    return false;
+  }
+  void display() {
+    printf("0x%016lx_%016lx_%016lx_%016lx", v[0], v[1], v[2], v[3]);
+  }
+};
+
 typedef struct {
   uint64_t gpr[32];
   uint64_t fpr[32];
 } arch_reg_state_t;
+
+typedef struct {
+  uint256_t vpr[32];
+} arch_vector_reg_state_t;
 
 typedef struct __attribute__((packed)) {
   uint64_t this_pc;
@@ -100,6 +128,14 @@ typedef struct __attribute__((packed)) {
   uint64_t stval;
   uint64_t mtvec;
   uint64_t stvec;
+  uint64_t hstatus;
+  uint64_t hgatp;
+  uint64_t vsstatus;
+  uint64_t vxrm;
+  uint64_t vstart;
+  uint64_t vl;
+  uint64_t vtype;
+  uint64_t virtualizationMode;
   uint64_t priviledgeMode;
 } arch_csr_state_t;
 
@@ -204,6 +240,7 @@ typedef struct {
   instr_commit_t    commit[DIFFTEST_COMMIT_WIDTH];
   arch_reg_state_t  regs;
   arch_csr_state_t  csr;
+  arch_vector_reg_state_t vregs;
   debug_mode_t      dmregs;
   sbuffer_state_t   sbuffer[DIFFTEST_SBUFFER_RESP_WIDTH];
   store_event_t     store[DIFFTEST_STORE_WIDTH];
@@ -304,6 +341,9 @@ public:
   }
   inline arch_reg_state_t *get_arch_reg_state() {
     return &(dut.regs);
+  }
+  inline arch_vector_reg_state_t *get_vector_reg_state() {
+    return &(dut.vregs);
   }
   inline sbuffer_state_t *get_sbuffer_state(uint8_t index) {
     return &(dut.sbuffer[index]);
