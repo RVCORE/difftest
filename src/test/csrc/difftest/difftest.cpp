@@ -643,7 +643,7 @@ void Difftest::display() {
   printf("\n==============  REF Regs  ==============\n");
   fflush(stdout);
   proxy->isa_reg_display();
-  printf("DUT virtualizationMode: %d, priviledgeMode: %lu\n", dut.csr.virtualizationMode, dut.csr.priviledgeMode);
+  printf("DUT virtualizationMode: %lu, priviledgeMode: %lu\n", dut.csr.virtualizationMode, dut.csr.priviledgeMode);
 }
 
 void DiffState::display(int coreid) {
