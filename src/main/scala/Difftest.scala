@@ -78,6 +78,7 @@ class DiffTrapEventIO extends DiffBasicTrapEventIO {
 
 class DiffCSRStateIO extends DifftestBundle {
   val priviledgeMode = Input(UInt(2.W))
+  val virtualizationMode = Input(Bool())
   val mstatus = Input(UInt(64.W))
   val sstatus = Input(UInt(64.W))
   val mepc = Input(UInt(64.W))

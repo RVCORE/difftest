@@ -125,6 +125,7 @@ extern "C" int v_difftest_step();
   DIFFTEST_DPIC_FUNC_DECL(CSRState) (    \
     DPIC_ARG_BYTE coreid,                \
     DPIC_ARG_BYTE priviledgeMode,        \
+    DPIC_ARG_BIT  virtualizationMode,    \
     DPIC_ARG_LONG mstatus,               \
     DPIC_ARG_LONG sstatus,               \
     DPIC_ARG_LONG mepc,                  \

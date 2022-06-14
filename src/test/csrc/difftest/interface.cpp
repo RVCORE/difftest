@@ -92,6 +92,7 @@ INTERFACE_CSR_STATE {
   RETURN_NO_NULL
   auto packet = difftest[coreid]->get_csr_state();
   packet->priviledgeMode = priviledgeMode;
+  packet->virtualizationMode = virtualizationMode;
   packet->mstatus = mstatus;
   packet->sstatus = sstatus;
   packet->mepc = mepc;

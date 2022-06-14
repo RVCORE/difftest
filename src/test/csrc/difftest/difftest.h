@@ -96,7 +96,7 @@ public:
     return false;
   }
   void display() {
-    printf("0x%016lx_%016lx_%016lx_%016lx", v[0], v[1], v[2], v[3]);
+    printf("0x%016lx_%016lx_%016lx_%016lx", v[3], v[2], v[1], v[0]);
   }
 };
 
