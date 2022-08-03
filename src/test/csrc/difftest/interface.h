@@ -145,7 +145,15 @@ extern "C" int v_difftest_step();
     DPIC_ARG_LONG medeleg,               \
     DPIC_ARG_LONG hstatus,               \
     DPIC_ARG_LONG hgatp,                 \
+    DPIC_ARG_LONG hideleg,               \
+    DPIC_ARG_LONG hedeleg,               \
+    DPIC_ARG_LONG htval,                 \
     DPIC_ARG_LONG vsstatus,              \
+    DPIC_ARG_LONG vsepc,                 \
+    DPIC_ARG_LONG vscause,               \
+    DPIC_ARG_LONG vstval,                \
+    DPIC_ARG_LONG vstvec,                \
+    DPIC_ARG_LONG vsatp,                 \
     DPIC_ARG_LONG vxrm,                  \
     DPIC_ARG_LONG vstart,                \
     DPIC_ARG_LONG vl,                    \

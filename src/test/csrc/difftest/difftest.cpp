@@ -35,7 +35,8 @@ static const char *reg_name[DIFFTEST_NR_REG+1] = {
   "satp",
   "mip", "mie", "mscratch", "sscratch", "mideleg", "medeleg",
   "mtval", "stval", "mtvec", "stvec",
-  "hstatus", "hgatp", "vsstatus",
+  "hstatus", "hgatp", "hideleg", "hedeleg", "htval",
+  "vsstatus", "vsepc", "vscause", "vstval", "vstvec", "vsatp",
   "vxrm", "vstart", "vl", "vtype",
   "virtualization", "mode",
 #ifdef DEBUG_MODE_DIFF
@@ -185,7 +186,8 @@ int Difftest::step() {
     ref_regs_ptr[72] = dut_regs_ptr[72];
   }
 
-  if (memcmp(dut_regs_ptr, ref_regs_ptr, DIFFTEST_NR_REG * sizeof(uint64_t))) {
+  if (memcmp(dut_regs_ptr, ref_regs_ptr, DIFFTEST_NR_REG * sizeof(uint64_t)) || 
+      memcmp(&dut.vregs, &ref.vregs, 32 * 4 * sizeof(uint64_t))) {
     display();
     for (int i = 0; i < DIFFTEST_NR_REG; i ++) {
       if (dut_regs_ptr[i] != ref_regs_ptr[i]) {

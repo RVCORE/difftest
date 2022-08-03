@@ -128,9 +128,19 @@ typedef struct __attribute__((packed)) {
   uint64_t stval;
   uint64_t mtvec;
   uint64_t stvec;
+  // Hypervisor
   uint64_t hstatus;
   uint64_t hgatp;
+  uint64_t hideleg;
+  uint64_t hedeleg;
+  uint64_t htval;
   uint64_t vsstatus;
+  uint64_t vsepc;
+  uint64_t vscause;
+  uint64_t vstval;
+  uint64_t vstvec;
+  uint64_t vsatp;
+  // Vector
   uint64_t vxrm;
   uint64_t vstart;
   uint64_t vl;

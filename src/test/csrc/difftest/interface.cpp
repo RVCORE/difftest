@@ -110,9 +110,19 @@ INTERFACE_CSR_STATE {
   packet->sscratch = sscratch;
   packet->mideleg = mideleg;
   packet->medeleg = medeleg;
+  // Hypervisor
   packet->hstatus = hstatus;
   packet->hgatp = hgatp;
+  packet->hideleg = hideleg;
+  packet->hedeleg = hedeleg;
+  packet->htval = htval;
   packet->vsstatus = vsstatus;
+  packet->vsepc = vsepc;
+  packet->vscause = vscause;
+  packet->vstval = vstval;
+  packet->vstvec = vstvec;
+  packet->vsatp = vsatp;
+  // Vector
   packet->vxrm = vxrm;
   packet->vstart = vstart;
   packet->vl = vl;
