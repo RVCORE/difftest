@@ -92,6 +92,7 @@ INTERFACE_CSR_STATE {
   RETURN_NO_NULL
   auto packet = difftest[coreid]->get_csr_state();
   packet->priviledgeMode = priviledgeMode;
+  packet->virtualizationMode = virtualizationMode;
   packet->mstatus = mstatus;
   packet->sstatus = sstatus;
   packet->mepc = mepc;
@@ -109,6 +110,23 @@ INTERFACE_CSR_STATE {
   packet->sscratch = sscratch;
   packet->mideleg = mideleg;
   packet->medeleg = medeleg;
+  // Hypervisor
+  packet->hstatus = hstatus;
+  packet->hgatp = hgatp;
+  packet->hideleg = hideleg;
+  packet->hedeleg = hedeleg;
+  packet->htval = htval;
+  packet->vsstatus = vsstatus;
+  packet->vsepc = vsepc;
+  packet->vscause = vscause;
+  packet->vstval = vstval;
+  packet->vstvec = vstvec;
+  packet->vsatp = vsatp;
+  // Vector
+  packet->vxrm = vxrm;
+  packet->vstart = vstart;
+  packet->vl = vl;
+  packet->vtype = vtype;
 }
 
 INTERFACE_DM_STATE {
@@ -209,6 +227,43 @@ INTERFACE_FP_REG_STATE {
   packet->fpr[29] = fpr_29;
   packet->fpr[30] = fpr_30;
   packet->fpr[31] = fpr_31;
+}
+
+INTERFACE_VECTOR_REG_STATE {
+  RETURN_NO_NULL
+  auto packet = difftest[coreid]->get_vector_reg_state();
+  packet->vpr[ 0] = vpr_0;
+  packet->vpr[ 1] = vpr_1;
+  packet->vpr[ 2] = vpr_2;
+  packet->vpr[ 3] = vpr_3;
+  packet->vpr[ 4] = vpr_4;
+  packet->vpr[ 5] = vpr_5;
+  packet->vpr[ 6] = vpr_6;
+  packet->vpr[ 7] = vpr_7;
+  packet->vpr[ 8] = vpr_8;
+  packet->vpr[ 9] = vpr_9;
+  packet->vpr[10] = vpr_10;
+  packet->vpr[11] = vpr_11;
+  packet->vpr[12] = vpr_12;
+  packet->vpr[13] = vpr_13;
+  packet->vpr[14] = vpr_14;
+  packet->vpr[15] = vpr_15;
+  packet->vpr[16] = vpr_16;
+  packet->vpr[17] = vpr_17;
+  packet->vpr[18] = vpr_18;
+  packet->vpr[19] = vpr_19;
+  packet->vpr[20] = vpr_20;
+  packet->vpr[21] = vpr_21;
+  packet->vpr[22] = vpr_22;
+  packet->vpr[23] = vpr_23;
+  packet->vpr[24] = vpr_24;
+  packet->vpr[25] = vpr_25;
+  packet->vpr[26] = vpr_26;
+  packet->vpr[27] = vpr_27;
+  packet->vpr[28] = vpr_28;
+  packet->vpr[29] = vpr_29;
+  packet->vpr[30] = vpr_30;
+  packet->vpr[31] = vpr_31;
 }
 
 INTERFACE_SBUFFER_EVENT {

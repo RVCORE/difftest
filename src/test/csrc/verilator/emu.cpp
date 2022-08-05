@@ -482,6 +482,8 @@ uint64_t Emulator::execute(uint64_t max_cycle, uint64_t max_instr) {
       }
     }
   }
+  for (int i = 0; i < 5; i++)
+    single_cycle();
   // Simulation ends here, do clean up & display jobs
 #if VM_TRACE == 1
   if (enable_waveform) tfp->close();

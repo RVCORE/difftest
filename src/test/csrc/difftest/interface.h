@@ -38,6 +38,7 @@
 #define DPIC_ARG_BYTE uint8_t
 #define DPIC_ARG_INT  uint32_t
 #define DPIC_ARG_LONG uint64_t
+#define DPIC_ARG_256 svBitVecVal*
 
 // #define DPIC_ARG_BIT  svBit
 // #define DPIC_ARG_BYTE char
@@ -124,6 +125,7 @@ extern "C" int v_difftest_step();
   DIFFTEST_DPIC_FUNC_DECL(CSRState) (    \
     DPIC_ARG_BYTE coreid,                \
     DPIC_ARG_BYTE priviledgeMode,        \
+    DPIC_ARG_BIT  virtualizationMode,    \
     DPIC_ARG_LONG mstatus,               \
     DPIC_ARG_LONG sstatus,               \
     DPIC_ARG_LONG mepc,                  \
@@ -140,7 +142,22 @@ extern "C" int v_difftest_step();
     DPIC_ARG_LONG mscratch,              \
     DPIC_ARG_LONG sscratch,              \
     DPIC_ARG_LONG mideleg,               \
-    DPIC_ARG_LONG medeleg                \
+    DPIC_ARG_LONG medeleg,               \
+    DPIC_ARG_LONG hstatus,               \
+    DPIC_ARG_LONG hgatp,                 \
+    DPIC_ARG_LONG hideleg,               \
+    DPIC_ARG_LONG hedeleg,               \
+    DPIC_ARG_LONG htval,                 \
+    DPIC_ARG_LONG vsstatus,              \
+    DPIC_ARG_LONG vsepc,                 \
+    DPIC_ARG_LONG vscause,               \
+    DPIC_ARG_LONG vstval,                \
+    DPIC_ARG_LONG vstvec,                \
+    DPIC_ARG_LONG vsatp,                 \
+    DPIC_ARG_LONG vxrm,                  \
+    DPIC_ARG_LONG vstart,                \
+    DPIC_ARG_LONG vl,                    \
+    DPIC_ARG_LONG vtype                  \
   )
 
 // v_difftest_DebugMode
@@ -246,6 +263,43 @@ extern "C" int v_difftest_step();
     DPIC_ARG_LONG fpr_29,                \
     DPIC_ARG_LONG fpr_30,                \
     DPIC_ARG_LONG fpr_31                 \
+  )
+
+#define INTERFACE_VECTOR_REG_STATE           \
+  DIFFTEST_DPIC_FUNC_DECL(ArchVectorRegState) ( \
+    DPIC_ARG_BYTE coreid,                \
+    DPIC_ARG_256 vpr_0,                  \
+    DPIC_ARG_256 vpr_1,                  \
+    DPIC_ARG_256 vpr_2,                  \
+    DPIC_ARG_256 vpr_3,                  \
+    DPIC_ARG_256 vpr_4,                  \
+    DPIC_ARG_256 vpr_5,                  \
+    DPIC_ARG_256 vpr_6,                  \
+    DPIC_ARG_256 vpr_7,                  \
+    DPIC_ARG_256 vpr_8,                  \
+    DPIC_ARG_256 vpr_9,                  \
+    DPIC_ARG_256 vpr_10,                 \
+    DPIC_ARG_256 vpr_11,                 \
+    DPIC_ARG_256 vpr_12,                 \
+    DPIC_ARG_256 vpr_13,                 \
+    DPIC_ARG_256 vpr_14,                 \
+    DPIC_ARG_256 vpr_15,                 \
+    DPIC_ARG_256 vpr_16,                 \
+    DPIC_ARG_256 vpr_17,                 \
+    DPIC_ARG_256 vpr_18,                 \
+    DPIC_ARG_256 vpr_19,                 \
+    DPIC_ARG_256 vpr_20,                 \
+    DPIC_ARG_256 vpr_21,                 \
+    DPIC_ARG_256 vpr_22,                 \
+    DPIC_ARG_256 vpr_23,                 \
+    DPIC_ARG_256 vpr_24,                 \
+    DPIC_ARG_256 vpr_25,                 \
+    DPIC_ARG_256 vpr_26,                 \
+    DPIC_ARG_256 vpr_27,                 \
+    DPIC_ARG_256 vpr_28,                 \
+    DPIC_ARG_256 vpr_29,                 \
+    DPIC_ARG_256 vpr_30,                 \
+    DPIC_ARG_256 vpr_31                  \
   )
 
 // v_difftest_SbufferEvent
