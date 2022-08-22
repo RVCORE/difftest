@@ -131,7 +131,7 @@ $(EMU): $(EMU_MK) $(EMU_DEPS) $(EMU_HEADERS) $(REF_SO)
 ifeq ($(REMOTE),localhost)
 	$(MAKE) build_emu_local
 else
-	ssh -tt $(REMOTE) 'export NOOP_HOME=$(NOOP_HOME); export NEMU_HOME=$(NEMU_HOME); $(MAKE) -C $(NOOP_HOME)/difftest -j230 build_emu_local'
+	ssh -tt $(REMOTE) 'export YINXING_HOME=$(YINXING_HOME); export NEMU_HOME=$(NEMU_HOME); $(MAKE) -C $(YINXING_HOME)/difftest -j230 build_emu_local'
 endif
 
 # log will only be printed when (B<=GTimer<=E) && (L < loglevel)
@@ -139,8 +139,8 @@ endif
 B ?= 0
 E ?= 0
 
-ifndef NOOP_HOME
-$(error NOOP_HOME is not set)
+ifndef YINXING_HOME
+$(error YINXING_HOME is not set)
 endif
 EMU_FLAGS = -s $(SEED) -b $(B) -e $(E) $(SNAPSHOT_OPTION) $(WAVEFORM) $(EMU_ARGS)
 

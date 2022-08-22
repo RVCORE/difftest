@@ -528,7 +528,7 @@ void parse_and_update_ramsize(const char* arg_ramsize_str) {
 inline char* Emulator::timestamp_filename(time_t t, char *buf) {
   char buf_time[64];
   strftime(buf_time, sizeof(buf_time), "%F@%T", localtime(&t));
-  char *noop_home = getenv("NOOP_HOME");
+  char *noop_home = getenv("YINXING_HOME");
   assert(noop_home != NULL);
   int len = snprintf(buf, 1024, "%s/build/%s", noop_home, buf_time);
   return buf + len;
@@ -562,7 +562,7 @@ inline char* Emulator::cycle_wavefile(uint64_t cycles, time_t t) {
   static char buf[1024];
   char buf_time[64];
   strftime(buf_time, sizeof(buf_time), "%F@%T", localtime(&t));
-  char *noop_home = getenv("NOOP_HOME");
+  char *noop_home = getenv("YINXING_HOME");
   assert(noop_home != NULL);
   int len = snprintf(buf, 1024, "%s/build/%s_%ld", noop_home, buf_time, cycles);
   strcpy(buf + len, ".vcd");
