@@ -223,7 +223,7 @@ abstract class DifftestModule[T <: DifftestBundle] extends ExtModule with HasExt
   }
 
   def getModArgString(argName: String, data: Data): String = {
-    val widthString = if (data.getWidth == 1) "      " else f"[${data.getWidth - 1}%2d:0]"
+    val widthString = if (data.getWidth == 1) "      " else if(DataMirror.directionOf(data) == ActualDirection.Output) f"reg [${data.getWidth - 1}%2d:0]" else f"[${data.getWidth - 1}%2d:0]"
     val argString = Seq(getDirectionString(data), widthString, s"$argName")
     argString.mkString(" ")
   }

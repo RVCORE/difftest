@@ -41,8 +41,13 @@ EMU_CXXFLAGS += -DDIFF_PROXY=SpikeProxy -DFIRST_INST_ADDRESS=0x80000000
 endif
 
 # Verilator version check
+VERILATOR_4_226 := $(shell expr `verilator --version | cut -f3 -d.` \>= 226)
 VERILATOR_4_210 := $(shell expr `verilator --version | cut -f3 -d.` \>= 210)
-ifeq ($(VERILATOR_4_210),1)
+
+ifeq ($(VERILATOR_4_226),1)
+EMU_CXXFLAGS += -DVERILATOR_4_226
+VEXTRA_FLAGS += --instr-count-dpi 1
+else ifeq ($(VERILATOR_4_210),1)
 EMU_CXXFLAGS += -DVERILATOR_4_210
 VEXTRA_FLAGS += --instr-count-dpi 1
 endif

@@ -22,7 +22,7 @@ import "DPI-C" function void set_max_cycles(int mc);
 import "DPI-C" function void simv_init();
 import "DPI-C" function int simv_step();
 
-module tb_top();
+module TOP();
 
 reg         clock;
 reg         reset;
