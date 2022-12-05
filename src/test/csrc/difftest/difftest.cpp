@@ -31,10 +31,10 @@ static const char *reg_name[DIFFTEST_NR_REG+1] = {
   "fs8", "fs9", "fs10", "fs11", "ft8", "ft9", "ft10", "ft11",
   "this_pc",
   "mstatus", "mcause", "mepc",
-  "sstatus", "scause", "sepc",
-  "satp",
-  "mip", "mie", "mscratch", "sscratch", "mideleg", "medeleg",
-  "mtval", "stval", "mtvec", "stvec",
+  "orig_sstatus", "orig_scause", "orig_sepc",
+  "orig_satp",
+  "mip", "mie", "mscratch", "nonvirtual_sscratch", "mideleg", "medeleg",
+  "mtval", "nonvirtual_stval", "mtvec", "nonvirtual_stvec",
   "hstatus", "hgatp", "hideleg", "hedeleg", "htval",
   "vsstatus", "vsepc", "vscause", "vstval", "vstvec", "vsatp",
   "vxrm", "vstart", "vl", "vtype",
@@ -645,7 +645,10 @@ void Difftest::display() {
   printf("\n==============  REF Regs  ==============\n");
   fflush(stdout);
   proxy->isa_reg_display();
-  printf("DUT virtualizationMode: %lu, priviledgeMode: %lu\n", dut.csr.virtualizationMode, dut.csr.priviledgeMode);
+  printf("DUT virtualizationMode: %lu, priviledgeMode: %lu %s\n", dut.csr.virtualizationMode, dut.csr.priviledgeMode,
+    dut.csr.priviledgeMode == 3 ? "M-mode" :
+    dut.csr.priviledgeMode == 1 ? "S-mode" :
+    dut.csr.priviledgeMode == 0 ? "U-mode" : "Unknown-Mode");
 }
 
 void DiffState::display(int coreid) {
