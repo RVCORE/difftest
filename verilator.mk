@@ -22,7 +22,7 @@ EMU_CSRC_DIR = $(abspath ./src/test/csrc)
 EMU_CXXFILES = $(shell find $(EMU_CSRC_DIR) -name "*.cpp") $(SIM_CXXFILES) $(DIFFTEST_CXXFILES)
 EMU_CXXFLAGS += -std=c++11 -static -Wall -I$(EMU_CSRC_DIR) -I$(SIM_CSRC_DIR) -I$(DIFFTEST_CSRC_DIR) -I$(PLUGIN_CHEAD_DIR)
 EMU_CXXFLAGS += -DVERILATOR -DNUM_CORES=$(NUM_CORES)
-EMU_CXXFLAGS += $(shell sdl2-config --cflags) -fPIE
+EMU_CXXFLAGS += $(shell pkg-config --cflags sdl2) -fPIE
 EMU_LDFLAGS  += -lpthread -lSDL2 -ldl -lz -lsqlite3
 EMU_CXX_EXTRA_FLAGS ?=
 
@@ -43,8 +43,12 @@ endif
 # Verilator version check
 VERILATOR_4_226 := $(shell expr `verilator --version | cut -f3 -d.` \>= 226)
 VERILATOR_4_210 := $(shell expr `verilator --version | cut -f3 -d.` \>= 210)
+VERILATOR_5 := $(shell expr `verilator --version | cut -b 11` \>= 5)
 
-ifeq ($(VERILATOR_4_226),1)
+ifeq ($(VERILATOR_5),1)
+EMU_CXXFLAGS += -DVERILATOR_4_226
+VEXTRA_FLAGS += --no-timing --instr-count-dpi 1
+else ifeq ($(VERILATOR_4_226),1)
 EMU_CXXFLAGS += -DVERILATOR_4_226
 VEXTRA_FLAGS += --instr-count-dpi 1
 else ifeq ($(VERILATOR_4_210),1)
